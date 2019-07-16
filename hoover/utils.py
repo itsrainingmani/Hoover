@@ -1,26 +1,28 @@
 import requests
 from bs4 import BeautifulSoup
 from lxml import etree
-from hoover import EDGAR, EDGAR_SEARCH, NO_MATCH, FUNDS
+from hoover import EDGAR, EDGAR_SEARCH, NO_MATCH_CIK, NO_MATCH_TICKER, FUNDS
 
 # Function that returns the Filing information for the most recent Holding Filing
-def mostRecentHolding(cik):
-    cik_validate_url = EDGAR_SEARCH % cik
-    r = requests.get(cik_validate_url)
+def mostRecentHolding(id):
+    validation_url = EDGAR_SEARCH % id
+    r = requests.get(validation_url)
     html_doc = r.text
 
-    if NO_MATCH in html_doc:
-        raise ValueError("CIK %s does not exist in EDGAR. Please try again" % cik)
+    if NO_MATCH_CIK in html_doc:
+        raise ValueError("CIK %s does not exist in EDGAR. Please try again" % id)
+    elif NO_MATCH_TICKER in html_doc:
+        raise ValueError("Ticker %s does not exist in EDGAR. Please try again" % id)
     
     soup = BeautifulSoup(html_doc, 'html.parser')
 
     fund_name = ''
-    if cik in FUNDS.keys():
-        fund_name = FUNDS[cik]
+    if id in FUNDS.keys():
+        fund_name = FUNDS[id]
     else:
         span_company_name = soup.find('span', {'class': 'companyName'})
         fund_name = span_company_name.contents[0]
-    print("CIK matches Fund - %s" % fund_name)
+    print("CIK/Ticker matches Fund - %s" % fund_name)
 
     filing_table = soup.find('table', {'class': 'tableFile2', 'summary': 'Results'})
     # tr_list = filing_table.find_all('tr')[1:]
@@ -42,6 +44,10 @@ def mostRecentHolding(cik):
     top_result_vals = list(map(lambda x: x.contents[0], top_result))
     return top_result_vals
 
+# Scrape the Filing page table.
+# If the 4th Column (Type) in the table has the value INFORMATION TABLE
+# and the 3rd Column (Document) ends with .xml, return the URL of the
+# XML file
 def getInformationTableUrl(url):
     r = requests.get(EDGAR % url)
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -60,6 +66,8 @@ def getInformationTableUrl(url):
 
     return xml_infotable_url
 
+# Given a single Information Table table row (tr), which contains nested values,
+# Loop through the element and return a flattened list of values
 def processInfoTable(iTable):
     shares = []
     for vals in iTable:
@@ -70,6 +78,8 @@ def processInfoTable(iTable):
             shares.append(vals.text)
     return shares
 
+# Given the url for the xml information table, download the document,
+# parse the tree, flatten the rows into a list and return a list of all share values.
 def processXml(data_url):
     r = requests.get(data_url)
     infotable_tree = etree.fromstring(bytes(r.text, encoding='utf-8'))
