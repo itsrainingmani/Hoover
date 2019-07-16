@@ -1,4 +1,5 @@
-# init file for Hoover applications
+# init file for Hoover application
+# Contains all global variables necessary for the program
 
 __version__ = "0.1"
 SPLASH_TEXT = '''
@@ -10,9 +11,11 @@ SPLASH_TEXT = '''
 ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝
 '''
 
+DATA_DIR = 'forms/'
 EDGAR = "https://www.sec.gov%s"
 EDGAR_SEARCH = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=%s&type=13F-HR&dateb=&owner=exclude&count=100"
-NO_MATCH = "No matching CIK."
+NO_MATCH_CIK = "No matching CIK."
+NO_MATCH_TICKER = "No matching Ticker Symbol."
 
 FUNDS = {
     '0001166559': 'Gates Foundation',
