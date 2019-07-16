@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from lxml import etree
-from hoover import EDGAR, EDGAR_SEARCH, NO_MATCH_CIK, NO_MATCH_TICKER, FUNDS
+from hoover import EDGAR, EDGAR_SEARCH, NO_MATCH_CIK, NO_MATCH_TICKER, FUNDS, FORMAT
 
 # Function that returns the Filing information for the most recent Holding Filing
 def mostRecentHolding(id):
@@ -69,13 +69,16 @@ def getInformationTableUrl(url):
 # Given a single Information Table table row (tr), which contains nested values,
 # Loop through the element and return a flattened list of values
 def processInfoTable(iTable):
-    shares = []
+    shares = ['' for i in range(12)]
     for vals in iTable:
+        tag_name = vals.tag[vals.tag.index('}')+1:]
+        tag_index = FORMAT[tag_name]
         if len(vals) > 0:
             for v in vals:
-                shares.append(v.text)
+                shares[tag_index] = v.text
+                tag_index += 1
         else:
-            shares.append(vals.text)
+            shares[tag_index] = vals.text
     return shares
 
 # Given the url for the xml information table, download the document,
@@ -84,7 +87,7 @@ def processXml(data_url):
     r = requests.get(data_url)
     infotable_tree = etree.fromstring(bytes(r.text, encoding='utf-8'))
     infotables = list(infotable_tree)
-    shares_list = [['Issuer', 'Title of Class', 'CUSIP', 'Value', 'SHRS OR PRN AMT', 'SH/PRN', 'Investment Discretion', 'Voting Authority - Sole', 'Voting Authority - Shared', 'Voting Authority - None']]
+    shares_list = [['Issuer', 'Title of Class', 'CUSIP', 'Value', 'Shr AmT', 'Shr Type', 'Put/Call', 'Investment Discretion', 'Other Manager', 'Sole', 'Shared', 'None']]
     for infoTable in infotables:
         shares_list.append(processInfoTable(infoTable))
     return shares_list
