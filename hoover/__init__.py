@@ -29,3 +29,15 @@ FUNDS = {
     '0001439289': 'TOSCAFUND ASSET MANAGEMENT LLP',
     '0001086364': 'Black Rock'
 }
+
+FORMAT = {
+    'nameOfIssuer': 0,
+    'titleOfClass': 1,
+    'cusip': 2,
+    'value': 3,
+    'shrsOrPrnAmt': 4,
+    'putCall': 6,
+    'investmentDiscretion': 7,
+    'otherManager': 8,
+    'votingAuthority': 9,
+}
