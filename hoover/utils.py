@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from lxml import etree
 from hoover import EDGAR, EDGAR_SEARCH, NO_MATCH, FUNDS
 
 def mostRecentHolding(cik):
@@ -32,7 +33,7 @@ def mostRecentHolding(cik):
     top_result_vals = list(map(lambda x: x.contents[0], top_result))
     return top_result_vals
 
-def getInformationTable(url):
+def getInformationTableUrl(url):
     r = requests.get(EDGAR % url)
     soup = BeautifulSoup(r.text, 'html.parser')
 
@@ -48,5 +49,23 @@ def getInformationTable(url):
             if ".xml" in doc_link.contents[0]:
                 xml_infotable_url = EDGAR % doc_link['href']
 
-    r = requests.get(xml_infotable_url)
-    return r.text
+    return xml_infotable_url
+
+def processInfoTable(iTable):
+    shares = []
+    for vals in iTable:
+        if len(vals) > 0:
+            for v in vals:
+                shares.append(v.text)
+        else:
+            shares.append(vals.text)
+    return shares
+
+def processXml(data_url):
+    r = requests.get(data_url)
+    infotable_tree = etree.fromstring(bytes(r.text, encoding='utf-8'))
+    infotables = list(infotable_tree)
+    shares_list = []
+    for infoTable in infotables:
+        shares_list.append(processInfoTable(infoTable))
+    return shares_list
