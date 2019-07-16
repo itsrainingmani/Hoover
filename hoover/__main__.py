@@ -3,15 +3,13 @@ import pprint
 import requests
 import argparse
 from bs4 import BeautifulSoup
-from hoover import SPLASH_TEXT
+from hoover import SPLASH_TEXT, DATA_DIR
 from .utils import mostRecentHolding, getInformationTableUrl, processXml
 
-DATA_DIR = 'forms/'
-
-def main(cik, output_file_name, add_timestamp):
+def main(id, output_file_name, add_timestamp):
     try:
-        # Try to validate the CIK
-        holdings = mostRecentHolding(cik)
+        # Try to validate the ID
+        holdings = mostRecentHolding(id)
     except ValueError as err:
         print(err)
         return
@@ -30,10 +28,14 @@ def main(cik, output_file_name, add_timestamp):
         print("Creating directory to hold file outputs\n")
         os.mkdir(DATA_DIR)
 
-    print("Writing Holding Info to Tab Separated File\n")
-    new_file_name = DATA_DIR + output_file_name + '-' + cik
+    print("\nWriting Holding Info to Tab Separated File")
+    new_file_name = DATA_DIR + output_file_name + '-' + id
 
+    # If the -t or --time flags were present during invocation
+    # Get current timestamp formatted into a string and append
+    # it to the end of the output filename
     if add_timestamp:
+        print("(with timestamp)\n")
         from datetime import datetime
         time_stamp = datetime.now()
         new_file_name += '-' + time_stamp.strftime('%Y%m%d_%H-%M-%S')
@@ -49,18 +51,18 @@ def main(cik, output_file_name, add_timestamp):
 if __name__ == '__main__':
     print(SPLASH_TEXT)
 
-    parser = argparse.ArgumentParser(description='Extract EDGAR data for a Fund', usage='python -m hoover [-h] CIK [-o | --output file] [-t | --time]')
-    parser.add_argument('CIK', type=str, help='Central Index Key for the Fund')
+    # Construct the ArgumentParser
+    parser = argparse.ArgumentParser(description='Extract EDGAR data for a Fund', usage='python -m hoover [-h] ID [-o | --output file] [-t | --time]')
+    parser.add_argument('ID', type=str, help='CIK or Ticker for a Fund')
     parser.add_argument('-o', '--output', help='Name of output tsv file', metavar='file', default='Form13F')
     parser.add_argument('-t', '--time', dest='timestamp', action='store_true', help='Flag to add timestamp to the output file name')
     parser.set_defaults(timestamp=False)
     args = parser.parse_args()
 
     try:
-        cik = int(args.CIK)
-        print("CIK to process - %s" % cik)
+        id = int(args.ID)
+        print("CIK to process - %s" % id)
     except:
-        print("The CIK has to be a valid number")
-        exit(-1)
+        print("Ticker to process - %s" % args.ID)
 
-    main(args.CIK, args.output, args.timestamp)
+    main(args.ID, args.output, args.timestamp)
