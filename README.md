@@ -19,14 +19,19 @@ pip install -r requirements.txt
 For help on how to use this CLI, run the following command:
 
 ```shell
-$ python -m hoover -h
+python -m hoover -h
+```
 
+Output:
+
+```shell
 ██╗  ██╗ ██████╗  ██████╗ ██╗   ██╗███████╗██████╗
 ██║  ██║██╔═══██╗██╔═══██╗██║   ██║██╔════╝██╔══██╗
 ███████║██║   ██║██║   ██║██║   ██║█████╗  ██████╔╝
 ██╔══██║██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗
 ██║  ██║╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
 ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝
+By Manikandan Sundararajan
 
 usage: python -m hoover [-h] ID [-o | --output file] [-t | --time]
 
@@ -47,8 +52,12 @@ optional arguments:
 To generate the _.tsv_ file for the Bill & Melinda Gates Foundation (CIK - 0001166559), we run following command:
 
 ```shell
-$ python -m hoover 0001166559
+python -m hoover 0001166559
+```
 
+Output:
+
+```text
 
 ██╗  ██╗ ██████╗  ██████╗ ██╗   ██╗███████╗██████╗
 ██║  ██║██╔═══██╗██╔═══██╗██║   ██║██╔════╝██╔══██╗
@@ -56,13 +65,13 @@ $ python -m hoover 0001166559
 ██╔══██║██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗
 ██║  ██║╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
 ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝
+By Manikandan Sundararajan
 
 CIK to process - 1166559
 CIK\Ticker matches Fund - Gates Foundation
 Creating directory to hold file output
 
 Writing Holding Info to Tab Separated File
-
 Done!
 ```
 
