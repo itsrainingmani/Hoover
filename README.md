@@ -70,7 +70,7 @@ When you run the CLI for the first time, the program will automatically create a
 
 ### Timestamp
 
-The default _.tsv_ file name format is: __Form13F-CIK.tsv__. If you add the _-t_ or _--time_ flag when invoking the CLI, the program will automatically add a timestamp to the end of the filename.
+The default _.tsv_ file name format is: __Form13F-ID.tsv__. If you add the _-t_ or _--time_ flag when invoking the CLI, the program will automatically add a timestamp to the end of the filename.
 
 For example:
 
@@ -97,6 +97,29 @@ will create a file named:
 ```text
 billmelindagates-0001166559.tsv
 ```
+
+# XML Parsing Strategy
+
+The Form 13F Information Table always has values for these columns - _Name of Issuer, Title of Class, CUSIP, Value, SHRS AMT, SH / PRN, Investment Discretion & Voting Authority_.
+The information table also has columns - _Put/Call & Other Manager_ that are rendered in the EDGAR web view but may or may not be present in the raw XML data.
+
+In order to simplify the parsing of these potentially different data formats, I decided to follow the example of the EDGAR Form 13F Information Table web view.
+
+By default, all 12 columns are initialized with an empty string. I use a dictionary where the XML tag names act as the keys, mapped to the index locations of that tag within a row.
+
+Since we only fill in data that is present in the table, this logic ensures that the tab separated file will always have a uniform format irrespective of what data is or is not present in the XML.
+
+# Output File Example
+
+Let us look at the example of the Bill & Melinda Gates Foundation Trust.
+
+```shell
+python -m hoover 0001166559
+```
+
+Tab Separated Output opened in Excel:
+
+![0001166559](excel-1166559.png)
 
 # Performance
 
