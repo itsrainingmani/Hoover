@@ -22,7 +22,7 @@ $ python -m hoover -h
 ██║  ██║╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
 ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝
 
-usage: python -m hoover [-h] CIK [-o | --output file]
+usage: python -m hoover [-h] CIK [-o | --output file] [-t | --time]
 
 Extract EDGAR data for a Fund
 
@@ -33,6 +33,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -o file, --output file
                         Name of output tsv file
+  -t, --time            Flag to add timestamp to the output file name
 ```
 
 From the output of help command, we can see process a Fund's holdings via
