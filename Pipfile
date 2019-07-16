@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 rope = "*"
 pprint = "*"
+black = "==19.3b0"
 
 [packages]
 requests = "*"
