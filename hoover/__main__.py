@@ -21,9 +21,9 @@ def main(cik):
 if __name__ == '__main__':
     print(SPLASH_TEXT)
 
-    parser = argparse.ArgumentParser(description='Extract EDGAR data for a fund')
-    parser.add_argument('CIK', type=str, help='Central Index Key for the fund')
-    parser.add_argument('--output', help='Name of output tsv file')
+    parser = argparse.ArgumentParser(description='Extract EDGAR data for a Fund', usage='python -m hoover [-h] CIK [-o | --output file]')
+    parser.add_argument('CIK', type=str, help='Central Index Key for the Fund')
+    parser.add_argument('-o', '--output', help='Name of output tsv file', metavar='file')
 
     args = parser.parse_args()
 

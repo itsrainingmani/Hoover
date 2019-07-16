@@ -22,16 +22,17 @@ $ python -m hoover -h
 ██║  ██║╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
 ╚═╝  ╚═╝ ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝
 
-usage: __main__.py [-h] [--output OUTPUT] CIK
+usage: python -m hoover [-h] CIK [-o | --output file]
 
-Extract EDGAR data for a fund
+Extract EDGAR data for a Fund
 
 positional arguments:
-  CIK              Central Index Key for the fund
+  CIK                   Central Index Key for the Fund
 
 optional arguments:
-  -h, --help       show this help message and exit
-  --output OUTPUT  Name of output tsv file
+  -h, --help            show this help message and exit
+  -o file, --output file
+                        Name of output tsv file
 ```
 
 From the output of help command, we can see process a Fund's holdings via
