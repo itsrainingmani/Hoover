@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from lxml import etree
 from hoover import EDGAR, EDGAR_SEARCH, NO_MATCH, FUNDS
 
+# Function that returns the Filing information for the most recent Holding Filing
 def mostRecentHolding(cik):
     cik_validate_url = EDGAR_SEARCH % cik
     r = requests.get(cik_validate_url)
@@ -65,7 +66,7 @@ def processXml(data_url):
     r = requests.get(data_url)
     infotable_tree = etree.fromstring(bytes(r.text, encoding='utf-8'))
     infotables = list(infotable_tree)
-    shares_list = []
+    shares_list = [['Issuer', 'Title of Class', 'CUSIP', 'Value', 'SHRS OR PRN AMT', 'SH/PRN', 'Investment Discretion', 'Voting Authority - Sole', 'Voting Authority - Shared', 'Voting Authority - None']]
     for infoTable in infotables:
         shares_list.append(processInfoTable(infoTable))
     return shares_list
