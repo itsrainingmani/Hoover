@@ -46,8 +46,6 @@ def main(cik, output_file_name, add_timestamp):
     print("Done!")
     return
 
-
-
 if __name__ == '__main__':
     print(SPLASH_TEXT)
 
