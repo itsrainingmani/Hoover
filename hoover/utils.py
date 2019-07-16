@@ -11,11 +11,17 @@ def mostRecentHolding(cik):
 
     if NO_MATCH in html_doc:
         raise ValueError("CIK %s does not exist in EDGAR. Please try again" % cik)
-
-    if cik in FUNDS.keys():
-        print("CIK matches Fund - %s \n" % FUNDS[cik])
     
     soup = BeautifulSoup(html_doc, 'html.parser')
+
+    fund_name = ''
+    if cik in FUNDS.keys():
+        fund_name = FUNDS[cik]
+    else:
+        span_company_name = soup.find('span', {'class': 'companyName'})
+        fund_name = span_company_name.contents[0]
+    print("CIK matches Fund - %s" % fund_name)
+
     filing_table = soup.find('table', {'class': 'tableFile2', 'summary': 'Results'})
     # tr_list = filing_table.find_all('tr')[1:]
     # for tr in tr_list:
@@ -24,12 +30,14 @@ def mostRecentHolding(cik):
     #     print(td_list_contents)
     #     print('\n')
 
-    # Extract the most recent 13F filing
+    # Extract the most recent 13F filing.
+    # Check if there are atleast 2 table rows. If there are not, this 
+    # means that the Fund does not have any Form 13Fs
     all_trs = filing_table.find_all('tr')
-    if len(all_trs) == 0:
-        raise ValueError("CIK does not have any Form 13Fs")
+    if len(all_trs) < 2:
+        raise ValueError("%s has not filed any Form 13Fs" % fund_name)
 
-    top_tr = filing_table.find_all('tr')[1]
+    top_tr = all_trs[1]
     top_result = list(filter(lambda x: x != '\n', top_tr.contents))
     top_result_vals = list(map(lambda x: x.contents[0], top_result))
     return top_result_vals
