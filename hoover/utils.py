@@ -44,6 +44,55 @@ def mostRecentHolding(id):
     top_result_vals = list(map(lambda x: x.contents[0], top_result))
     return top_result_vals
 
+# Function that returns the Filing information for the most recent Holding Filing
+def nMostRecentHoldings(id, n):
+    validation_url = EDGAR_SEARCH % id
+    r = requests.get(validation_url)
+    html_doc = r.text
+
+    if NO_MATCH_CIK in html_doc:
+        raise ValueError("CIK %s does not exist in EDGAR. Please try again" % id)
+    elif NO_MATCH_TICKER in html_doc:
+        raise ValueError("Ticker %s does not exist in EDGAR. Please try again" % id)
+
+    soup = BeautifulSoup(html_doc, "html.parser")
+
+    fund_name = ""
+    if id in FUNDS.keys():
+        fund_name = FUNDS[id]
+    else:
+        span_company_name = soup.find("span", {"class": "companyName"})
+        fund_name = span_company_name.contents[0]
+    print("CIK/Ticker matches Fund - %s" % fund_name)
+
+    filing_table = soup.find("table", {"class": "tableFile2", "summary": "Results"})
+    # tr_list = filing_table.find_all('tr')[1:]
+    # for tr in tr_list:
+    #     td_list = list(filter(lambda x: x != '\n', tr.contents))
+    #     td_list_contents = list(map(lambda x: x.contents[0], td_list))
+    #     print(td_list_contents)
+    #     print('\n')
+
+    # Extract the most recent 13F filing.
+    # Check if there are atleast 2 table rows. If there are not, this
+    # means that the Fund does not have any Form 13Fs
+    top_n_holdings = []
+    all_trs = filing_table.find_all("tr")
+    if len(all_trs) < 2:
+        raise ValueError("%s has not filed any Form 13Fs" % fund_name)
+
+    tr_list = filing_table.find_all('tr')[1:]
+    if n >= len(tr_list):
+        n_tr_list = tr_list
+    else:
+        n_tr_list = tr_list[:n]
+
+    for tr in n_tr_list:
+        td_list = list(filter(lambda x: x != '\n', tr.contents))
+        td_list_contents = list(map(lambda x: x.contents[0], td_list))
+        top_n_holdings.append(td_list_contents)
+
+    return top_n_holdings
 
 # Scrape the Filing page table.
 # If the 4th Column (Type) in the table has the value INFORMATION TABLE
